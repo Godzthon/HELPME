@@ -1,0 +1,43 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class TargetDetected : MonoBehaviour
+{
+    [SerializeField] private float _distanceDetect;
+
+    private Transform _useTarget;
+
+    private void FixedUpdate()
+    {
+        if (_useTarget != null)
+        {          
+            {
+                float distanceDetect = Vector2.Distance(_useTarget.position, transform.position);
+
+                if (distanceDetect <_distanceDetect)
+                {                
+                    var dir = _useTarget.position - transform.position;
+                    var euler = transform.eulerAngles;
+                    euler.z = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+                    transform.eulerAngles = euler;                  
+                }
+            }
+        }
+
+        if (_useTarget == null)
+        {
+            transform.eulerAngles = new Vector3(0, 0, 0);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Enemy enemy = collision.GetComponent<Enemy>();
+        
+        if (enemy != null)
+        {
+            _useTarget = enemy.GetComponent<Transform>();       
+        }
+    }
+}
